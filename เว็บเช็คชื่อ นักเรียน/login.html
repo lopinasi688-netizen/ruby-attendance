@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#11111B">
+    <title>เข้าสู่ระบบครู | ระบบเช็คชื่อนักเรียน</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <main class="login-container">
+        <section class="login-card">
+            <div class="brand-icon">T</div>
+
+            <h1>ระบบเช็คชื่อนักเรียน</h1>
+            <p>เข้าสู่ระบบสำหรับครูผู้ดูแล</p>
+
+            <form id="loginForm">
+                <label for="email">อีเมล</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="กรอกอีเมลครู"
+                    required
+                >
+
+                <label for="password">รหัสผ่าน</label>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="กรอกรหัสผ่าน"
+                    required
+                >
+
+                <button type="submit" id="loginButton">
+                    เข้าสู่ระบบ
+                </button>
+
+                <p id="loginMessage" role="alert"></p>
+            </form>
+        </section>
+    </main>
+
+    <script type="module" src="js/login.js"></script>
+    <script src="js/navigation-effects.js"></script>
+    
+</body>
+</html>

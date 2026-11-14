@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#11111B">
+
+    <title>จัดการนักเรียน | ระบบเช็คชื่อนักเรียน</title>
+
+    <script>
+        try {
+            if (sessionStorage.getItem("rubyPageTransition") === "1") {
+                document.documentElement.classList.add("ruby-loading-on");
+            }
+        } catch (error) {
+            console.warn("Loading state unavailable:", error);
+        }
+    </script>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- SCHOOL PAGE LOADER -->
+<div class="page-loader" aria-hidden="true">
+    <div class="loader-content">
+        <img
+            src="https://cdn.phototourl.com/anon/2026-11-14-7d7ba2eb-02d3-469f-a285-039d9462e82c.png"
+            alt="ตราโรงเรียนราชประชานุเคราะห์ ๕๔"
+            class="loader-school-seal"
+        >
+
+        <div class="loader-spinner"></div>
+
+        <p>กำลังโหลดระบบ...</p>
+    </div>
+</div>
+
+<div class="app-container">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">T</div>
+            <div>
+                <h2>ระบบเช็คชื่อนักเรียน</h2>
+                <span>STUDENT MANAGEMENT</span>
+            </div>
+        </div>
+
+        <p class="menu-label">MAIN MENU</p>
+
+        <nav class="navigation">
+            <a href="index.html" class="nav-item"><span>🏠</span> ภาพรวม</a>
+            <a href="attendance.html" class="nav-item"><span>📝</span> เช็กชื่อประจำวัน</a>
+            <a href="students.html" class="nav-item active"><span>👨‍🎓</span> รายชื่อนักเรียน</a>
+            <a href="classrooms.html" class="nav-item"><span>🏫</span> จัดการห้องเรียน</a>
+            <a href="history.html" class="nav-item"><span>📅</span> ประวัติการเข้าเรียน</a>
+            <a href="reports.html" class="nav-item"><span>📊</span> รายงานสถิติ</a>
+            <a href="student-history.html" class="nav-item"><span>📜</span> ประวัตินักเรียน</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="teacher-card">
+                <div class="teacher-avatar">T</div>
+                <div>
+                    <strong>บัญชีครู</strong>
+                    <span>Teacher Account</span>
+                </div>
+            </div>
+
+            <button id="logoutBtn" class="logout-btn">ออกจากระบบ</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <span class="breadcrumb">ระบบจัดการ / นักเรียน</span>
+                <h1>จัดการนักเรียน</h1>
+            </div>
+
+            <div class="topbar-right">
+                <div class="online-status">
+                    <span class="status-dot"></span>
+                    Connected
+                </div>
+                <div class="profile-icon">T</div>
+            </div>
+        </header>
+
+        <section class="welcome-section">
+            <div>
+                <h2>รายชื่อนักเรียน 👨‍🎓</h2>
+                <p>จัดการข้อมูลนักเรียน ห้องเรียน และสถานะการศึกษา</p>
+            </div>
+        </section>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>👥</span>
+                    <span class="stat-label">นักเรียนทั้งหมด</span>
+                </div>
+                <h3 id="totalStudents">0</h3>
+                <p>Total Students</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>✓</span>
+                    <span class="stat-label">กำลังศึกษา</span>
+                </div>
+                <h3 class="green" id="activeStudents">0</h3>
+                <p>Currently Studying</p>
+            </div>
+        </section>
+
+        <section class="panel student-panel">
+
+            <div class="student-toolbar">
+                <div>
+                    <h3>รายชื่อนักเรียน</h3>
+                    <p>รายชื่อนักเรียนทั้งหมดในระบบ</p>
+                </div>
+
+                <button
+                    class="primary-button add-student-button"
+                    id="addStudentBtn"
+                    type="button">
+                    + เพิ่มนักเรียน
+                </button>
+            </div>
+
+            <div class="search-box">
+                <span>⌕</span>
+                <input
+                    type="search"
+                    id="studentSearch"
+                    placeholder="ค้นหาชื่อ รหัส หรือห้องเรียน..."
+                    autocomplete="off">
+            </div>
+
+            <div class="table-wrapper">
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>รหัสนักเรียน</th>
+                            <th>ชื่อ - นามสกุล</th>
+                            <th>ห้องเรียน</th>
+                            <th>สถานะ</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="studentTableBody"></tbody>
+                </table>
+
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">👨‍🎓</div>
+                    <h3>ยังไม่มีข้อมูลนักเรียน</h3>
+                    <p>กดปุ่มเพิ่มนักเรียนเพื่อเริ่มต้นใช้งาน</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            ระบบเช็คชื่อนักเรียน © 2026 | Student Attendance Management
+        </footer>
+
+    </main>
+</div>
+
+<!-- STUDENT MODAL -->
+<div class="modal-overlay" id="studentModal">
+    <div class="modal-card">
+
+        <div class="modal-header">
+            <div>
+                <h2 id="modalTitle">เพิ่มนักเรียน</h2>
+                <p>กรอกข้อมูลนักเรียนด้านล่าง</p>
+            </div>
+
+            <button
+                type="button"
+                class="close-modal"
+                id="closeModalBtn"
+                aria-label="ปิด">
+                ×
+            </button>
+        </div>
+
+        <form id="studentForm">
+
+            <input type="hidden" id="editStudentId">
+
+            <div class="form-group">
+                <label for="studentCode">รหัสนักเรียน</label>
+                <input
+                    type="text"
+                    id="studentCode"
+                    placeholder="เช่น 66001"
+                    required
+                    maxlength="50">
+            </div>
+
+            <div class="form-group">
+                <label for="studentName">ชื่อ - นามสกุล</label>
+                <input
+                    type="text"
+                    id="studentName"
+                    placeholder="กรอกชื่อและนามสกุล"
+                    required
+                    maxlength="200">
+            </div>
+
+            <div class="form-group">
+                <label for="studentClassroom">ห้องเรียน</label>
+                <select id="studentClassroom" required>
+                    <option value="">กำลังโหลดห้องเรียน...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="studentStatus">สถานะนักเรียน</label>
+                <select id="studentStatus" required>
+                    <option value="studying">กำลังศึกษา</option>
+                    <option value="suspended">พักการเรียน</option>
+                    <option value="transferred">ย้ายออก</option>
+                    <option value="graduated">พ้นสภาพ</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button
+                    type="button"
+                    class="secondary-button"
+                    id="cancelModalBtn">
+                    ยกเลิก
+                </button>
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                    id="saveStudentBtn">
+                    บันทึกข้อมูล
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module" src="js/students.js"></script>
+<script type="module" src="js/page-guard.js"></script>
+<script src="js/navigation-effects.js"></script>
+
+</body>
+</html>

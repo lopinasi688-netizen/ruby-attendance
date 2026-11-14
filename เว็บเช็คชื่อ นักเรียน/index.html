@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#171717">
+
+    <title>ภาพรวม | ระบบเช็คชื่อนักเรียน</title>
+
+    <script>
+        try {
+            if (sessionStorage.getItem("rubyPageTransition") === "1") {
+                document.documentElement.classList.add("ruby-loading-on");
+            }
+        } catch (error) {
+            console.warn("Loading state unavailable:", error);
+        }
+    </script>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="page-loader" aria-hidden="true">
+    <div class="loader-content">
+        <img
+            src="https://cdn.phototourl.com/anon/2026-11-14-7d7ba2eb-02d3-469f-a285-039d9462e82c.png"
+            alt="ตราโรงเรียนราชประชานุเคราะห์ ๕๔"
+            class="loader-school-seal"
+        >
+
+        <div class="loader-spinner"></div>
+
+        <p>กำลังโหลดระบบ...</p>
+    </div>
+</div>
+
+<div class="app-container">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">R</div>
+            <div>
+                <h2>Ruby Attendance</h2>
+                <span>STUDENT MANAGEMENT</span>
+            </div>
+        </div>
+
+        <p class="menu-label">เมนูหลัก</p>
+
+        <nav class="navigation">
+            <a href="index.html" class="nav-item active">
+                <span>🏠</span> ภาพรวม
+            </a>
+
+            <a href="attendance.html" class="nav-item">
+                <span>📝</span> เช็กชื่อประจำวัน
+            </a>
+
+            <a href="students.html" class="nav-item">
+                <span>👨‍🎓</span> รายชื่อนักเรียน
+            </a>
+
+            <a href="classrooms.html" class="nav-item">
+                <span>🏫</span> จัดการห้องเรียน
+            </a>
+
+            <a href="history.html" class="nav-item">
+                <span>📅</span> ประวัติการเข้าเรียน
+            </a>
+
+            <a href="student-history.html" class="nav-item">
+                <span>📜</span> ประวัตินักเรียน
+            </a>
+
+            <a href="reports.html" class="nav-item">
+                <span>📊</span> รายงานสถิติ
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="teacher-card">
+                <div class="teacher-avatar">T</div>
+                <div>
+                    <strong>บัญชีครู</strong>
+                    <span>Teacher Account</span>
+                </div>
+            </div>
+
+            <button id="logoutBtn" class="logout-btn" type="button">
+                ออกจากระบบ
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <span class="breadcrumb">ระบบจัดการ / ภาพรวม</span>
+                <h1>ภาพรวมระบบ</h1>
+            </div>
+
+            <div class="topbar-right">
+                <div class="online-status">
+                    <span class="status-dot"></span>
+                    ระบบพร้อมใช้งาน
+                </div>
+                <div class="profile-icon">T</div>
+            </div>
+        </header>
+
+        <section class="welcome-section">
+            <div>
+                <h2>ยินดีต้อนรับสู่ Ruby Attendance</h2>
+                <p>ระบบจัดการข้อมูลนักเรียนและติดตามการเข้าเรียน</p>
+            </div>
+
+            <div class="date-display" id="currentDate">
+                กำลังโหลดวันที่...
+            </div>
+        </section>
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>👥</span>
+                    <span class="stat-label">นักเรียนทั้งหมด</span>
+                </div>
+                <h3 id="totalStudents">—</h3>
+                <p>จำนวนนักเรียนในระบบ</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>✓</span>
+                    <span class="stat-label">มาเรียน</span>
+                </div>
+                <h3 class="green" id="presentCount">—</h3>
+                <p>นักเรียนที่มาเรียนวันนี้</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>✕</span>
+                    <span class="stat-label">ขาดเรียน</span>
+                </div>
+                <h3 class="red" id="absentCount">—</h3>
+                <p>นักเรียนที่ขาดเรียนวันนี้</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>◷</span>
+                    <span class="stat-label">มาสาย</span>
+                </div>
+                <h3 class="yellow" id="lateCount">—</h3>
+                <p>นักเรียนที่มาสายวันนี้</p>
+            </div>
+
+        </section>
+
+        <section class="content-grid">
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h3>สรุปการเข้าเรียนวันนี้</h3>
+                        <p>ภาพรวมสถานะการเข้าเรียนของนักเรียน</p>
+                    </div>
+                    <span class="panel-icon">▥</span>
+                </div>
+
+                <div class="attendance-summary">
+                    <div class="progress-circle" id="attendanceCircle">
+                        <div class="circle-inner">
+                            <strong id="attendancePercent">—</strong>
+                            <span>มาเรียน</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-details">
+                        <div>
+                            <span class="legend green-bg"></span>
+                            มาเรียน
+                            <strong id="summaryPresent">—</strong>
+                        </div>
+
+                        <div>
+                            <span class="legend red-bg"></span>
+                            ขาดเรียน
+                            <strong id="summaryAbsent">—</strong>
+                        </div>
+
+                        <div>
+                            <span class="legend yellow-bg"></span>
+                            มาสาย
+                            <strong id="summaryLate">—</strong>
+                        </div>
+
+                        <div>
+                            <span class="legend blue-bg"></span>
+                            ลา
+                            <strong id="summaryLeave">—</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel quick-panel">
+                <div class="panel-header">
+                    <div>
+                        <h3>เมนูทางลัด</h3>
+                        <p>เลือกไปยังส่วนต่าง ๆ ของระบบ</p>
+                    </div>
+                </div>
+
+                <a class="primary-button" href="attendance.html">
+                    📝 เช็กชื่อประจำวัน
+                </a>
+
+                <a class="secondary-button" href="students.html">
+                    👨‍🎓 จัดการข้อมูลนักเรียน
+                </a>
+
+                <a class="secondary-button" href="classrooms.html">
+                    🏫 จัดการห้องเรียน
+                </a>
+
+                <a class="secondary-button" href="history.html">
+                    📅 ประวัติการเข้าเรียน
+                </a>
+
+                <a class="secondary-button" href="student-history.html">
+                    📜 ประวัติการเปลี่ยนแปลงนักเรียน
+                </a>
+
+                <a class="secondary-button" href="reports.html">
+                    📊 รายงานสถิติ
+                </a>
+            </div>
+
+        </section>
+
+        <footer>
+            Ruby Attendance © 2026 | ระบบจัดการการเข้าเรียน
+        </footer>
+
+    </main>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/navigation-effects.js"></script>
+
+<script type="module" src="js/dashboard.js"></script>
+<script type="module" src="js/page-guard.js"></script>
+
+</body>
+</html>

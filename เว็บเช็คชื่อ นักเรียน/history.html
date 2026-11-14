@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#11111B">
+
+    <title>ประวัติการเข้าเรียน | ระบบเช็คชื่อนักเรียน</title>
+
+    <!-- ตรวจสอบสถานะก่อนแสดงหน้า -->
+    <script>
+        try {
+            if (sessionStorage.getItem("rubyPageTransition") === "1") {
+                document.documentElement.classList.add("ruby-loading-on");
+            }
+        } catch (error) {
+            console.warn("Loading state unavailable:", error);
+        }
+    </script>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- PAGE LOADER -->
+<div class="page-loader" aria-hidden="true">
+    <div class="loader-content">
+        <img
+            src="https://cdn.phototourl.com/anon/2026-11-14-7d7ba2eb-02d3-469f-a285-039d9462e82c.png"
+            alt="ตราโรงเรียนราชประชานุเคราะห์ ๕๔"
+            class="loader-school-seal"
+        >
+        <div class="loader-spinner"></div>
+        <p>กำลังโหลดระบบ...</p>
+    </div>
+</div>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">T</div>
+            <div>
+                <h2>ระบบเช็คชื่อนักเรียน</h2>
+                <span>STUDENT MANAGEMENT</span>
+            </div>
+        </div>
+
+        <p class="menu-label">MAIN MENU</p>
+
+        <nav class="navigation">
+
+            <a href="index.html" class="nav-item">
+                <span>🏠</span>
+                ภาพรวม
+            </a>
+
+            <a href="attendance.html" class="nav-item">
+                <span>📝</span>
+                เช็กชื่อประจำวัน
+            </a>
+
+            <a href="students.html" class="nav-item">
+                <span>👨‍🎓</span>
+                รายชื่อนักเรียน
+            </a>
+
+            <a href="classrooms.html" class="nav-item">
+                <span>🏫</span>
+                จัดการห้องเรียน
+            </a>
+
+            <a href="history.html" class="nav-item active">
+                <span>📅</span>
+                ประวัติการเข้าเรียน
+            </a>
+
+            <a href="reports.html" class="nav-item">
+                <span>📊</span>
+                รายงานสถิติ
+            </a>
+
+            <a href="student-history.html" class="nav-item">
+                <span>📜</span>
+                ประวัตินักเรียน
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="teacher-card">
+                <div class="teacher-avatar">T</div>
+                <div>
+                    <strong>บัญชีครู</strong>
+                    <span>Teacher Account</span>
+                </div>
+            </div>
+
+            <button id="logoutBtn" class="logout-btn">
+                ออกจากระบบ
+            </button>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <span class="breadcrumb">ระบบจัดการ / ประวัติการเข้าเรียน</span>
+                <h1>ประวัติการเข้าเรียน</h1>
+            </div>
+
+            <div class="topbar-right">
+                <div class="online-status">
+                    <span class="status-dot"></span>
+                    Connected
+                </div>
+                <div class="profile-icon">T</div>
+            </div>
+        </header>
+
+        <section class="welcome-section">
+            <div>
+                <h2>ประวัติการเข้าเรียน 📅</h2>
+                <p>ตรวจสอบข้อมูลการเข้าเรียนย้อนหลังของนักเรียน</p>
+            </div>
+        </section>
+
+        <!-- FILTERS -->
+        <section class="panel history-filter-panel">
+
+            <div class="history-filter-grid">
+
+                <div class="date-input-group">
+                    <label for="historyClassroom">ห้องเรียน</label>
+                    <select id="historyClassroom">
+                        <option value="">ทุกห้องเรียน</option>
+                    </select>
+                </div>
+
+                <div class="date-input-group">
+                    <label for="historyStartDate">ตั้งแต่วันที่</label>
+                    <input type="date" id="historyStartDate">
+                </div>
+
+                <div class="date-input-group">
+                    <label for="historyEndDate">ถึงวันที่</label>
+                    <input type="date" id="historyEndDate">
+                </div>
+
+                <div class="date-input-group">
+                    <label for="historySemester">ภาคเรียน</label>
+                    <select id="historySemester">
+                        <option value="">ทุกภาคเรียน</option>
+                        <option value="1">ภาคเรียนที่ 1</option>
+                        <option value="2">ภาคเรียนที่ 2</option>
+                    </select>
+                </div>
+
+                <div class="date-input-group">
+                    <label for="historyStatus">สถานะ</label>
+                    <select id="historyStatus">
+                        <option value="">ทุกสถานะ</option>
+                        <option value="present">มาเรียน</option>
+                        <option value="absent">ขาดเรียน</option>
+                        <option value="late">มาสาย</option>
+                        <option value="leave">ลา</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="history-filter-actions">
+                <button type="button" class="primary-button" id="applyHistoryFilter">
+                    ค้นหาประวัติ
+                </button>
+
+                <button type="button" class="secondary-button" id="resetHistoryFilter">
+                    ล้างตัวกรอง
+                </button>
+            </div>
+
+        </section>
+
+        <!-- STATISTICS -->
+        <section class="stats-grid attendance-stats">
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>📋</span>
+                    <span class="stat-label">รายการทั้งหมด</span>
+                </div>
+                <h3 id="historyTotalCount">0</h3>
+                <p>Total Records</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>✓</span>
+                    <span class="stat-label">มาเรียน</span>
+                </div>
+                <h3 class="green" id="historyPresentCount">0</h3>
+                <p>Present</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>✕</span>
+                    <span class="stat-label">ขาดเรียน</span>
+                </div>
+                <h3 class="red" id="historyAbsentCount">0</h3>
+                <p>Absent</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>◷</span>
+                    <span class="stat-label">มาสาย</span>
+                </div>
+                <h3 class="yellow" id="historyLateCount">0</h3>
+                <p>Late</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span>📝</span>
+                    <span class="stat-label">ลา</span>
+                </div>
+                <h3 id="historyLeaveCount">0</h3>
+                <p>Leave</p>
+            </div>
+
+        </section>
+
+        <!-- HISTORY TABLE -->
+        <section class="panel attendance-panel">
+
+            <div class="attendance-toolbar">
+                <div>
+                    <h3>รายการเข้าเรียนย้อนหลัง</h3>
+                    <p>ข้อมูลการเช็กชื่อที่บันทึกไว้ในระบบ</p>
+                </div>
+
+                <button type="button" class="secondary-button" id="refreshHistory">
+                    ↻ รีเฟรช
+                </button>
+            </div>
+
+            <div class="search-box">
+                <span>⌕</span>
+                <input
+                    type="search"
+                    id="historySearch"
+                    placeholder="ค้นหาชื่อหรือรหัสนักเรียน..."
+                >
+            </div>
+
+            <div id="historyLoading" class="empty-state">
+                <p>กำลังโหลดประวัติการเข้าเรียน...</p>
+            </div>
+
+            <div class="table-wrapper" id="historyTableWrapper" hidden>
+
+                <table class="student-table attendance-table">
+
+                    <thead>
+                        <tr>
+                            <th>วันที่</th>
+                            <th>รหัสนักเรียน</th>
+                            <th>ชื่อ - นามสกุล</th>
+                            <th>ห้องเรียน</th>
+                            <th>สถานะ</th>
+                            <th>ภาคเรียน</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="historyTableBody"></tbody>
+
+                </table>
+
+            </div>
+
+            <div class="empty-state" id="historyEmpty" hidden>
+                <div class="empty-icon">📅</div>
+                <h3>ไม่พบประวัติการเข้าเรียน</h3>
+                <p>ลองเปลี่ยนตัวกรองหรือค้นหาด้วยคำอื่น</p>
+            </div>
+
+            <div class="empty-state" id="historyError" hidden>
+                <div class="empty-icon">⚠️</div>
+                <h3>ไม่สามารถโหลดข้อมูลได้</h3>
+                <p id="historyErrorMessage">กรุณาลองอีกครั้ง</p>
+                <button type="button" class="secondary-button" id="retryHistory">
+                    ลองอีกครั้ง
+                </button>
+            </div>
+
+        </section>
+
+        <footer>
+            ระบบเช็คชื่อนักเรียน © 2026 | Student Attendance Management
+        </footer>
+
+    </main>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module" src="js/history.js"></script>
+<script type="module" src="js/page-guard.js"></script>
+<script src="js/navigation-effects.js"></script>
+
+</body>
+</html>
